@@ -1,0 +1,2 @@
+rootProject.name='Birds Flashcard'
+include ':app'

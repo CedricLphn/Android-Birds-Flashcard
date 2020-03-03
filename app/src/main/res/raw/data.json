@@ -1,0 +1,31 @@
+[{
+    "name": "Alouette",
+    "sound": "alouette_des_champs.mp3",
+    "difficulty": 1,
+    "image": "alouette.jpg"
+}, {
+    "name": "Accenteur Mouchet",
+    "sound": "accenteurmouchet.mp3",
+    "difficulty": 1,
+    "image": "accenteur_mouchet.jpg"
+}, {
+    "name": "Bruant",
+    "sound": "bruantjaune.mp3",
+    "difficulty": 1,
+    "image": "bruant.jpg"
+}, {
+    "name": "Coucou",
+    "sound": "coucou.mp3",
+    "difficulty": 1,
+    "image": "coucou.jpg"
+}, {
+    "name": "Etourneau",
+    "sound": "etourneau.mp3",
+    "difficulty": 1,
+    "image": "etourneau.jpg"
+}, {
+    "name": "Fauvette",
+    "sound": "fauvettetetenoire.mp3",
+    "difficulty": 1,
+    "image": "fauvette.jpg"
+}]
