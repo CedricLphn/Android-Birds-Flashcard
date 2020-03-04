@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             boolean generatedFirstCard = false;
             while(flashcards.size() != maxQuestions) {
                 Random tmpRandBird = new Random();
-                int randomBird = tmpRandBird.nextInt(repository.size());
+                int randomBird = tmpRandBird.nextInt(repository.size() -1);
                 Topic tmpBird = repository.get(randomBird);
 
                 if(!generatedFirstCard) {
@@ -155,6 +155,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(!nextQuestion) {
                     nextQuestion = true;
                     if(responseUser != null) {
+                        for(int i = 0; i < radios.size(); i++) {
+                            radios.get(i).setEnabled(false);
+                        }
                         if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
                             answerTextView.setText("Bonne réponse");
                             goodAnswerCount++;
@@ -163,7 +166,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                         Button btn = findViewById(R.id.validateButton);
-                        btn.setText("Question suivante");
+                        if(currentQuestionNumber != (maxQuestions -1)) {
+                            btn.setText("Question suivante");
+                        }else {
+                            btn.setText("Voir le résultat");
+                        }
 
                     }
                 }else {

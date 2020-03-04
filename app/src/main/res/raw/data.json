@@ -28,11 +28,5 @@
     "sound": "fauvettetetenoire",
     "difficulty": 1,
     "image": "fauvette"
-},
-    {
-        "name": "Melec",
-        "sound": "lemelec",
-        "difficulty": 2,
-        "image": "melec"
-    }
+}
 ]
