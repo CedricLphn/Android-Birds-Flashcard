@@ -62,6 +62,7 @@ public class Repository {
             JSONObject object = null;
             try {
                 object = repo.getJSONObject(i);
+
                 topics_all.add(new Topic(object.getString("image"), object.getString("name"), object.getString("sound"), object.getInt("difficulty")));
 
             } catch (JSONException e) {
@@ -69,41 +70,32 @@ public class Repository {
             }
         }
 
-      topics.addAll(topics_all);
 
+        topics.addAll(topics_all);
+
+    }
+
+    public Repository(Context context, int difficulty){
+        this(context);
+        topics = new ArrayList<>();
+
+        ArrayList<Topic> tmp = new ArrayList<>();
+
+        for(int i = 0; i < topics_all.size(); i++){
+            if(topics_all.get(i).difficulty != difficulty)
+            {
+                tmp.add(topics_all.get(i));
+            }
+        }
+
+        topics_all.removeAll(tmp);
+        topics.addAll(topics_all);
     }
 
     public Topic get(int id)  {
         return topics_all.get(id);
     }
 
-    public String getRandomName() throws JSONException {
-        return get(generateRandom(0, size())).name;
-    }
-
-    public int generateRandom(int start, int end) {
-        Random rand = new Random();
-        int range = end - start + 1;
-
-        int random = rand.nextInt(range) + 1;
-        while(exclude.contains(random)) {
-            random = rand.nextInt(range) + 1;
-        }
-
-        exclude.add(random);
-
-        return random;
-    }
-
-    public List<Flashcard> generateFlashcard(Topic topic, int requestNumber, int maxAnswer) {
-        List<Flashcard> flashcards = new ArrayList<>();
-
-        for(int i = 0; i < requestNumber; i++) {
-            flashcards.add(generateFlashcard(topics, topic, maxAnswer));
-        }
-
-        return flashcards;
-    }
 
     public Flashcard generateFlashcard(List<Topic> topics, Topic topic, int count) {
         Flashcard flashcard = new Flashcard(topic);

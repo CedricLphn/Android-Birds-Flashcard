@@ -30,17 +30,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static boolean isFirst = true;
 
     private ArrayList<Integer> exclude;
-    private int responseCode = -1;
     private Repository repository = null;
     private Topic bird = null;
-    private int responseUser = -1;
+    private String responseUser = null;
 
     private int maxQuestions = 2;
     private int currentQuestionNumber = 0;
     private int goodAnswerCount = 0;
     private boolean nextQuestion = false;
 
+    private int difficulty = 1;
+
     private ArrayList<Flashcard> flashcards;
+
+    List<RadioButton> radios;
+
 
 
     @Override
@@ -51,17 +55,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (isFirst) {
             isFirst=  false;
-            repository = new Repository(this);
+            repository = new Repository(this, difficulty);
 
 
-
-            for(int i = 0; i < 2; i++) {
+            boolean generatedFirstCard = false;
+            while(flashcards.size() != maxQuestions) {
                 Random tmpRandBird = new Random();
                 int randomBird = tmpRandBird.nextInt(repository.size());
-
                 Topic tmpBird = repository.get(randomBird);
 
-                flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
+                if(!generatedFirstCard) {
+                    flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
+                }else if(!flashcards.contains(tmpBird)) {
+                    flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
+                }else {
+                    Log.e("FLASHCARD", "already exist");
+                }
             }
 
             bird = flashcards.get(0).topic;
@@ -85,10 +94,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.validateButton).setOnClickListener(this);
         findViewById(R.id.playButton).setOnClickListener(this);
 
+        int uiNumber = currentQuestionNumber+1;
+        setTitle("Flashcard " + uiNumber + "/" + maxQuestions);
+
     }
 
     private void initQuestion() {
-        List<RadioButton> radios = new ArrayList<>();
+        radios = new ArrayList<>();
+
         RadioButton r1 = findViewById(R.id.response1RadioButton);
         RadioButton r2 = findViewById(R.id.response2RadioButton);
         RadioButton r3 = findViewById(R.id.response3RadioButton);
@@ -112,15 +125,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
-
-        // FIXME
-        // De base ils sont déjà mélangé !!
-        int random = (int)(Math.random() * ((3 - 1) + 1)) + 1;
-        responseCode = random;
-
-        // END FIXME
-
-
         ImageView birdImageView = findViewById(R.id.imageView);
         birdImageView.setImageResource(getResources().getIdentifier(bird.image, "drawable", getPackageName()));
 
@@ -139,19 +143,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case R.id.response1RadioButton:
-                responseUser = 1;
+                responseUser = radios.get(0).getText().toString();
                 break;
             case R.id.response2RadioButton:
-                responseUser = 2;
+                responseUser = radios.get(1).getText().toString();
                 break;
             case R.id.response3RadioButton:
-                responseUser = 3;
+                responseUser = radios.get(2).getText().toString();
                 break;
             case R.id.validateButton:
                 if(!nextQuestion) {
                     nextQuestion = true;
-                    if(responseUser != -1) {
-                        if(responseUser == responseCode && responseUser != -1) {
+                    if(responseUser != null) {
+                        if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
                             answerTextView.setText("Bonne réponse");
                             goodAnswerCount++;
                         }else {
@@ -168,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     intent.putExtra("aIsFirst", isFirst);
                     intent.putExtra("aGoodAnswerQuestion", goodAnswerCount);
                     intent.putExtra(EXTRA_CURRENT_QUESTION, currentQuestionNumber);
-                    intent.putExtra("aDifficulty", bird.difficulty);
+                    intent.putExtra("aDifficulty", difficulty);
                     startActivity(intent);
                 }
 
