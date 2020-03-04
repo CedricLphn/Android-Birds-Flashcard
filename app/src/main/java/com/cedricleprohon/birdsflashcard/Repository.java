@@ -1,6 +1,8 @@
 package com.cedricleprohon.birdsflashcard;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,8 +19,8 @@ import java.util.Random;
 public class Repository {
     private ArrayList<Integer> exclude;
     private JSONArray repo = null;
-    private List<Topic> topics_all;
-    public List<Topic> topics;
+    private ArrayList<Topic> topics_all;
+    public ArrayList<Topic> topics;
 
     private int idTopic;
 
@@ -71,12 +73,12 @@ public class Repository {
 
     }
 
-    public JSONObject get(int id) throws JSONException {
-        return new JSONObject(repo.get(id).toString());
+    public Topic get(int id)  {
+        return topics_all.get(id);
     }
 
     public String getRandomName() throws JSONException {
-        return get(generateRandom(0, size())).getString("name");
+        return get(generateRandom(0, size())).name;
     }
 
     public int generateRandom(int start, int end) {
@@ -93,13 +95,20 @@ public class Repository {
         return random;
     }
 
+    public List<Flashcard> generateFlashcard(Topic topic, int requestNumber, int maxAnswer) {
+        List<Flashcard> flashcards = new ArrayList<>();
+
+        for(int i = 0; i < requestNumber; i++) {
+            flashcards.add(generateFlashcard(topics, topic, maxAnswer));
+        }
+
+        return flashcards;
+    }
+
     public Flashcard generateFlashcard(List<Topic> topics, Topic topic, int count) {
         Flashcard flashcard = new Flashcard(topic);
 
         Random rand = new Random();
-
-       /* int range = 1 - count + 1;
-        int random = rand.nextInt(count); */
 
         flashcard.answer.add(topic.name);
 
@@ -125,4 +134,14 @@ public class Repository {
         return repo.length();
     }
 
+    @Override
+    public String toString() {
+        return "Repository{" +
+                "exclude=" + exclude +
+                ", repo=" + repo +
+                ", topics_all=" + topics_all +
+                ", topics=" + topics +
+                ", idTopic=" + idTopic +
+                '}';
+    }
 }
