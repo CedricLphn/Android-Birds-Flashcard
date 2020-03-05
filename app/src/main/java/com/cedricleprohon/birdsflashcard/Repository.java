@@ -1,8 +1,6 @@
 package com.cedricleprohon.birdsflashcard;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -21,62 +19,17 @@ public class Repository {
     private ArrayList<Topic> topics_all;
     public ArrayList<Topic> topics;
 
-    private int idTopic;
-
     public Repository(Context context) {
         topics_all = new ArrayList<>();
         topics = new ArrayList<>();
-        String JSONString = null;
-        JSONArray JSONObject = null;
-        try {
-
-            //open the inputStream to the file
-            InputStream inputStream = context.getResources().openRawResource(R.raw.data);
-
-            int sizeOfJSONFile = inputStream.available();
-
-            //array that will store all the data
-            byte[] bytes = new byte[sizeOfJSONFile];
-
-            //reading data into the array from the file
-            inputStream.read(bytes);
-
-            //close the input stream
-            inputStream.close();
-
-            JSONString = new String(bytes, "UTF-8");
-            JSONObject = new JSONArray(JSONString);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        catch (JSONException x) {
-            x.printStackTrace();
-        }
-
-        repo = JSONObject;
-
-        for(int i = 0; i < size(); i++) {
-            JSONObject object = null;
-            try {
-                object = repo.getJSONObject(i);
-
-                topics_all.add(new Topic(object.getString("image"), object.getString("name"), object.getString("sound"), object.getInt("difficulty")));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        topics.addAll(topics_all);
-
+        loadJson(context);
     }
+
+
 
     public Repository(Context context, int difficulty){
         this(context);
-        topics = new ArrayList<>();
-
+        topics.clear();
         ArrayList<Topic> tmp = new ArrayList<>();
 
         for(int i = 0; i < topics_all.size(); i++){
@@ -124,7 +77,7 @@ public class Repository {
 
 
     public int size() {
-        return repo.length();
+        return topics.size();
     }
 
     @Override
@@ -133,7 +86,53 @@ public class Repository {
                 ", repo=" + repo +
                 ", topics_all=" + topics_all +
                 ", topics=" + topics +
-                ", idTopic=" + idTopic +
                 '}';
+    }
+
+    private void loadJson(Context context) {
+        String JSONString;
+        JSONArray JSONObject = null;
+        try {
+
+            //open the inputStream to the file
+            InputStream inputStream = context.getResources().openRawResource(R.raw.data);
+
+            int sizeOfJSONFile = inputStream.available();
+
+            //array that will store all the data
+            byte[] bytes = new byte[sizeOfJSONFile];
+
+            //reading data into the array from the file
+            inputStream.read(bytes);
+
+            //close the input stream
+            inputStream.close();
+
+            JSONString = new String(bytes, "UTF-8");
+            JSONObject = new JSONArray(JSONString);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        catch (JSONException x) {
+            x.printStackTrace();
+        }
+
+        repo = JSONObject;
+
+        for(int i = 0; i < repo.length(); i++) {
+            org.json.JSONObject object;
+            try {
+                object = repo.getJSONObject(i);
+
+                topics_all.add(new Topic(object.getString("image"), object.getString("name"), object.getString("sound"), object.getInt("difficulty")));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        topics.addAll(topics_all);
+
     }
 }

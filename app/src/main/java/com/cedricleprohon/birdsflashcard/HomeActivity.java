@@ -17,6 +17,7 @@ import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
+    // Modify this line for more flashcard
     private static final int EXTRA_MAX_QUESTION = 2;
 
     @Override
@@ -105,7 +106,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void LaunchActivity(int difficulty) {
         ArrayList<Flashcard > flashcards = createFlashcardsRepository(difficulty);
-
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
         intent.putExtra(Application.DIFFICULTY.toString(), difficulty);

@@ -28,5 +28,66 @@
     "sound": "fauvettetetenoire",
     "difficulty": 1,
     "image": "fauvette"
-}
+}, {
+    "name": "Grive",
+    "image": "grive",
+    "sound": "grivemusicienne",
+    "difficulty": 2
+}, {
+    "name": "Loriot",
+    "image": "loriot",
+    "sound": "loriot",
+    "difficulty": 2
+}, {
+    "name": "Merle",
+    "image": "merle",
+    "sound": "merle_noir",
+    "difficulty": 2
+},{
+    "name": "Pinson",
+    "image": "pinson",
+    "sound": "pinson",
+    "difficulty": 2
+},{
+    "name": "Pouillot véloce",
+    "image": "pouillot",
+    "sound": "pouillot_veloce",
+    "difficulty": 2
+}, {
+    "name": "Pouillot siffleur",
+    "image": "pouillot_siffleur",
+    "sound": "pouillot_siffleur",
+    "difficulty": 2
+}, {
+    "name": "Rossignol",
+    "image": "rossignol",
+    "sound": "rossignol",
+    "difficulty": 3
+},{
+    "name": "Rouge gorge",
+    "image": "rouge_gorge",
+    "sound": "rouge_gorge",
+    "difficulty": 3
+}, {
+    "name": "Rouge queue",
+    "image": "rouge_queue",
+    "sound": "rouge_queuenoir",
+    "difficulty": 3
+}, {
+    "name": "Serin",
+    "image": "serin",
+    "sound": "serin_cini",
+    "difficulty": 3
+}, {
+    "name": "Troglodyte",
+    "image": "troglodyte",
+    "sound": "troglodyte",
+    "difficulty": 3
+}, {
+    "name": "Verdier",
+    "image": "verdier",
+    "sound": "verdier",
+    "difficulty": 3
+},
+
 ]
