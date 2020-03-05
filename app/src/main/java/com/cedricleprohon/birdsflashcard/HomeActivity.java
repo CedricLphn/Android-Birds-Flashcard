@@ -11,7 +11,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -23,17 +29,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Change background color of Title
         ActionBar actionBar= getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
         setContentView(R.layout.activity_home);
 
-
+        // Listen click event
         findViewById(R.id.playButton).setOnClickListener(this);
         findViewById(R.id.galleryButton).setOnClickListener(this);
         findViewById(R.id.aboutButton).setOnClickListener(this);
     }
 
+    /**
+     * Onclick bind
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -41,7 +53,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 chooseDifficultyDialog();
                 break;
             case R.id.galleryButton:
-                goToGallery();
+                try {
+                    goToGallery();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.aboutButton:
                 goToAbout();
@@ -49,12 +65,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    /**
+     * Fast way to go About Page
+     */
+
     private void goToAbout() {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 
-    private void goToGallery() {
+    /**
+     * Fast way to go Gallery Page
+     */
+    
+    private void goToGallery() throws IOException {
         Repository repository = new Repository(this);
         ArrayList<Flashcard> flashcards = new ArrayList<>();
         for(int i = 0; i < repository.topics.size(); i++) {
@@ -66,22 +91,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
+    /**
+     * Create alert for choose difficulty
+     */
     private void chooseDifficultyDialog() {
+        // Create Alert Dialog component
        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
 
-       final String[] difficultyString = new String[]{
-               "Facile",
-               "Moyen",
-               "Difficile"
-       };
-
        mBuilder.setTitle("Choisir la difficulté");
-       mBuilder.setSingleChoiceItems(difficultyString, -1, new DialogInterface.OnClickListener() {
-
+       mBuilder.setSingleChoiceItems(Application.getDifficulties(), -1, new DialogInterface.OnClickListener() {
            @Override
            public void onClick(DialogInterface dialogInterface, int i) {
                dialogInterface.dismiss();
-               LaunchActivity(i+1);
+               try {
+                   LaunchActivity(i+1);
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
            }
        });
 
@@ -89,20 +115,29 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
        mDialog.show();
     }
 
-    private ArrayList<Flashcard> createFlashcardsRepository(int difficulty) {
+    /**
+     * Create all flashcards
+     * @param difficulty Set the difficulty (1-3)
+     * @return
+     */
+    private ArrayList<Flashcard> createFlashcardsRepository(int difficulty) throws IOException {
         Repository repository = new Repository(this, difficulty);
         ArrayList<Flashcard> flashcards = new ArrayList<>();
         boolean generatedFirstCard = false;
 
         while(flashcards.size() != EXTRA_MAX_QUESTION) {
+            // Get a random flashcard
             Random tmpRandBird = new Random();
             int randomBird = tmpRandBird.nextInt(repository.size() -1);
             Topic tmpBird = repository.get(randomBird);
 
+            // This is the first card ?
             if(!generatedFirstCard) {
+                // Adding the flashcard without checks
                 generatedFirstCard = true;
                 flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
             }else {
+                // No, check to prevent duplicates flashcards
                 if(!flashcards.contains(tmpBird))
                     flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
 
@@ -112,7 +147,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return flashcards;
     }
 
-    private void LaunchActivity(int difficulty) {
+    /**
+     * Launch the Main activity
+     * Requirement :
+     *  - a Flashcards Repository
+     *  - difficulty
+     *  - good questions number
+     *  - maximum questions for this game
+     * @param difficulty
+     */
+    private void LaunchActivity(int difficulty) throws IOException {
         ArrayList<Flashcard > flashcards = createFlashcardsRepository(difficulty);
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);

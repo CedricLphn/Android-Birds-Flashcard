@@ -1,9 +1,5 @@
 package com.cedricleprohon.birdsflashcard;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,56 +7,61 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public static final String EXTRA_CURRENT_QUESTION = "aCurrentQuestionNumber";
-    public static final String EXTRA_GOOD_QUESTION = "aGoodAnswerCount";
-
     static boolean isFirst = true;
 
-    private Repository repository = null;
+    /**
+     * Flashcard
+     */
     private Topic bird = null;
-    private String responseUser = null;
+    private ArrayList<Flashcard> flashcards;
 
+
+    /**
+     * Set The repository
+     */
+    private int difficulty;
     private int maxQuestions;
     private int currentQuestionNumber;
     private int goodAnswerCount;
     private boolean nextQuestion = false;
 
-    private int difficulty;
-
-    private ArrayList<Flashcard> flashcards;
-
+    /**
+     * UX
+     */
+    private String responseUser = null;
     private boolean getResult = false;
-
     List<RadioButton> radios;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /**
+         * Set UX
+         */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActionBar actionBar= getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
+        /**
+         * Go to home if user click in back button
+         */
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
@@ -69,38 +70,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
+        // Initialize variable
+        isFirst = false;
         flashcards = new ArrayList<>();
         Intent srcIntent = getIntent();
-        currentQuestionNumber = srcIntent.getIntExtra(EXTRA_CURRENT_QUESTION, 0);
-        goodAnswerCount = srcIntent.getIntExtra(EXTRA_GOOD_QUESTION, 0);
-        isFirst = false;
-        flashcards = srcIntent.getParcelableArrayListExtra("aFlashcards");
-        goodAnswerCount = srcIntent.getIntExtra("aGoodAnswerCount", 0);
-        bird = flashcards.get(currentQuestionNumber).topic;
-
+        currentQuestionNumber = srcIntent.getIntExtra(Application.CURRENT_QUESTION.toString(), 0);
+        goodAnswerCount = srcIntent.getIntExtra(Application.GOOD_QUESTION.toString(), 0);
+        flashcards = srcIntent.getParcelableArrayListExtra(Application.FLASHCARDS_LIST.toString());
         difficulty = srcIntent.getIntExtra(Application.DIFFICULTY.toString(), 1);
         maxQuestions = srcIntent.getIntExtra(Application.MAX_QUESTION.toString(), 0);
 
+        // Get the current topic of flashcard
+        bird = flashcards.get(currentQuestionNumber).topic;
 
-        initQuestion();
-
-        findViewById(R.id.response1RadioButton).setOnClickListener(this);
-        findViewById(R.id.response2RadioButton).setOnClickListener(this);
-        findViewById(R.id.response3RadioButton).setOnClickListener(this);
-        findViewById(R.id.validateButton).setOnClickListener(this);
-        findViewById(R.id.playButton).setOnClickListener(this);
-        this.getOnBackPressedDispatcher().addCallback(this, callback);
-
-        int uiNumber = currentQuestionNumber+1;
-        setTitle("Question " + uiNumber + " sur " + maxQuestions);
-
-    }
-
-    private void backToHome() {
-        Application.backToHome(this);
-    }
-
-    private void initQuestion() {
+        // Set the list of radio Button
         radios = new ArrayList<>();
 
         RadioButton r1 = findViewById(R.id.response1RadioButton);
@@ -110,6 +93,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         radios.add(r2);
         radios.add(r3);
 
+        initQuestion();
+
+        // Binding click
+        findViewById(R.id.response1RadioButton).setOnClickListener(this);
+        findViewById(R.id.response2RadioButton).setOnClickListener(this);
+        findViewById(R.id.response3RadioButton).setOnClickListener(this);
+        findViewById(R.id.validateButton).setOnClickListener(this);
+        findViewById(R.id.playButton).setOnClickListener(this);
+        this.getOnBackPressedDispatcher().addCallback(this, callback);
+
+        // Show the current question
+        int uiNumber = currentQuestionNumber+1;
+        setTitle("Question " + uiNumber + " sur " + maxQuestions);
+
+    }
+
+    /**
+     * Fast way to go home
+     */
+    private void backToHome() {
+        Application.backToHome(this);
+    }
+
+    /**
+     * Initialize UX flashcard interface
+     */
+    private void initQuestion() {
+        // Hide Pictures birds and sound
         findViewById(R.id.imageView).setVisibility(View.INVISIBLE);
         findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
         TextView answerresp = findViewById(R.id.answerTextView);
@@ -117,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         nextQuestion = false;
 
+        // Computer choose beetween picture or sound
         if((int)(Math.random() * 2) == 1) {
             // Is Picture
             findViewById(R.id.imageView).setVisibility(View.VISIBLE);
@@ -127,40 +139,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             question.setText("Quel oiseau produit ce cri ?");
         }
 
+        // Load Picture
         ImageView birdImageView = findViewById(R.id.imageView);
-        birdImageView.setImageResource(getResources().getIdentifier(bird.image, "drawable", getPackageName()));
+        Picasso.get().load(Application.URL_FOLDER.toString() + bird.image).into(birdImageView);
 
+        // Get temporary current flashcard
         Flashcard answer = flashcards.get(currentQuestionNumber);
         Log.i("MainActivity", "initQuestion: " + answer);
 
+        // Show possibility answer in radioButton
         for(int i = 0; i < radios.size(); i++) {
             radios.get(i).setText(answer.answer.get(i));
         }
 
     }
 
+    public String getTextRadioButton(int idRadio) {
+        return radios.get(idRadio).getText().toString();
+    }
+
     @Override
     public void onClick(View v) {
         TextView answerTextView = findViewById(R.id.answerTextView);
 
+        /**
+         * Check if
+         *  - User pressed first radio
+         *  - User pressed the second radio
+         *  - User pressed third radio
+         *  - User pressed Validate Button
+         *  - User pressed the Listen Button
+         */
         switch (v.getId()) {
             case R.id.response1RadioButton:
-                responseUser = radios.get(0).getText().toString();
+                responseUser = getTextRadioButton(0);
                 break;
             case R.id.response2RadioButton:
-                responseUser = radios.get(1).getText().toString();
+                responseUser = getTextRadioButton(1);
                 break;
             case R.id.response3RadioButton:
-                responseUser = radios.get(2).getText().toString();
+                responseUser = getTextRadioButton(2);
                 break;
             case R.id.validateButton:
+                /**
+                 * Check if
+                 * - getResult is not true --> So the user is not at the last question
+                 * - nextquestion is false --> The user did not click on the button to go to the following question
+                 * - responseUser is null --> the user did not answer
+                 */
                 if(!getResult) {
                     if(!nextQuestion) {
                         nextQuestion = true;
                         if(responseUser != null) {
+                            // Disable all radio button
                             for(int i = 0; i < radios.size(); i++) {
                                 radios.get(i).setEnabled(false);
                             }
+                            // If the user has the right answer
                             if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
                                 answerTextView.setText("Bonne réponse");
                                 goodAnswerCount = goodAnswerCount + 1;
@@ -178,26 +213,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         }
                     }else {
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.putParcelableArrayListExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
-                        intent.putExtra(Application.GOOD_QUESTION.toString(), goodAnswerCount);
-                        intent.putExtra(Application.CURRENT_QUESTION.toString(), currentQuestionNumber+1);
-                        intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
-                        intent.putExtra(Application.MAX_QUESTION.toString(), maxQuestions);
-                        startActivity(intent);
+                        Application.startMainActivity(
+                                this,
+                                flashcards,
+                                goodAnswerCount,
+                                currentQuestionNumber,
+                                maxQuestions,
+                                difficulty
+                        );
                     }
                 }else {
+                    // If the number of questions is reached, the user is redirected to the result page.
                     Intent intent = new Intent(this, ResultActivity.class);
-                    intent.putExtra("aDifficulty", difficulty);
-                    intent.putExtra(EXTRA_GOOD_QUESTION, goodAnswerCount);
-                    intent.putExtra("aMaxQuestions", maxQuestions);
+                    intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
+                    intent.putExtra(Application.GOOD_QUESTION.toString(), goodAnswerCount);
+                    intent.putExtra(Application.MAX_QUESTION.toString(), maxQuestions);
                     startActivity(intent);
                 }
 
 
                 break;
             case R.id.playButton:
-                    MediaPlayer.create(this, getResources().getIdentifier(bird.sound, "raw", getPackageName())).start();
+                // Play the beautiful song of bird
+                    MediaPlayer mp = new MediaPlayer();
+
+                try {
+                    mp.setDataSource(Application.URL_FOLDER + bird.sound);
+                    mp.prepareAsync();
+                    mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
         }
     }
