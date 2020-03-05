@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Topic bird = null;
     private String responseUser = null;
 
-    private int maxQuestions = 4;
+    private int maxQuestions = 2;
     private int currentQuestionNumber = 0;
     private int goodAnswerCount;
     private boolean nextQuestion = false;
@@ -55,41 +55,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         flashcards = new ArrayList<>();
+        Intent srcIntent = getIntent();
+        currentQuestionNumber = srcIntent.getIntExtra(EXTRA_CURRENT_QUESTION, 0);
+        goodAnswerCount = srcIntent.getIntExtra(EXTRA_GOOD_QUESTION, 0);
+        isFirst = false;
+        flashcards = srcIntent.getParcelableArrayListExtra("aFlashcards");
+        goodAnswerCount = srcIntent.getIntExtra("aGoodAnswerCount", 0);
+        bird = flashcards.get(currentQuestionNumber).topic;
 
-        if (isFirst) {
-            goodAnswerCount = 0;
-            isFirst=  false;
-            repository = new Repository(this, difficulty);
-
-
-            boolean generatedFirstCard = false;
-            while(flashcards.size() != maxQuestions) {
-                Random tmpRandBird = new Random();
-                int randomBird = tmpRandBird.nextInt(repository.size() -1);
-                Topic tmpBird = repository.get(randomBird);
-
-                if(!generatedFirstCard) {
-                    flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
-                }else if(!flashcards.contains(tmpBird)) {
-                    flashcards.add(repository.generateFlashcard(repository.topics, tmpBird, 3));
-                }else {
-                    Log.e("FLASHCARD", "already exist");
-                }
-            }
-
-            bird = flashcards.get(0).topic;
-
-        }else {
-            Intent srcIntent = getIntent();
-            currentQuestionNumber = srcIntent.getIntExtra(EXTRA_CURRENT_QUESTION, 0);
-            goodAnswerCount = srcIntent.getIntExtra(EXTRA_GOOD_QUESTION, 0);
-            currentQuestionNumber++;
-            isFirst = false;
-            flashcards = srcIntent.getParcelableArrayListExtra("aFlashcards");
-            goodAnswerCount = srcIntent.getIntExtra("aGoodAnswerCount", 0);
-            bird = flashcards.get(currentQuestionNumber).topic;
-
-        }
 
         initQuestion();
 
@@ -185,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         intent.putParcelableArrayListExtra("aFlashcards", flashcards);
                         intent.putExtra("aIsFirst", isFirst);
                         intent.putExtra(EXTRA_GOOD_QUESTION, goodAnswerCount);
-                        intent.putExtra(EXTRA_CURRENT_QUESTION, currentQuestionNumber);
+                        intent.putExtra(EXTRA_CURRENT_QUESTION, currentQuestionNumber++);
                         intent.putExtra("aDifficulty", difficulty);
                         startActivity(intent);
                     }

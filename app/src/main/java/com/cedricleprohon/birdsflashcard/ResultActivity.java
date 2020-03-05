@@ -11,14 +11,12 @@ import android.widget.TextView;
 
 public class ResultActivity extends AppCompatActivity {
 
-    ActionBar actionBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        actionBar= getSupportActionBar();
+        ActionBar actionBar= getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
         Intent intent = getIntent();

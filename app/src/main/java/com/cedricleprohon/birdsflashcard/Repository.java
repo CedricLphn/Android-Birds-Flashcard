@@ -17,15 +17,13 @@ import java.util.List;
 import java.util.Random;
 
 public class Repository {
-    private ArrayList<Integer> exclude;
-    private JSONArray repo = null;
+    private JSONArray repo;
     private ArrayList<Topic> topics_all;
     public ArrayList<Topic> topics;
 
     private int idTopic;
 
     public Repository(Context context) {
-        exclude = new ArrayList<>();
         topics_all = new ArrayList<>();
         topics = new ArrayList<>();
         String JSONString = null;
@@ -104,10 +102,13 @@ public class Repository {
 
         flashcard.answer.add(topic.name);
 
+        int i = 0;
+
         while (flashcard.answer.size() != count) {
             int random = rand.nextInt(topics.size());
 
             Topic t = topics.get(random);
+
             if (!flashcard.answer.contains(t.name)) {
                 flashcard.answer.add(t.name);
             }
@@ -129,7 +130,6 @@ public class Repository {
     @Override
     public String toString() {
         return "Repository{" +
-                "exclude=" + exclude +
                 ", repo=" + repo +
                 ", topics_all=" + topics_all +
                 ", topics=" + topics +
