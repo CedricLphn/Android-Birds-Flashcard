@@ -27,21 +27,24 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String EXTRA_CURRENT_QUESTION = "aCurrentQuestionNumber";
+    public static final String EXTRA_GOOD_QUESTION = "aGoodAnswerCount";
+
     static boolean isFirst = true;
 
-    private ArrayList<Integer> exclude;
     private Repository repository = null;
     private Topic bird = null;
     private String responseUser = null;
 
-    private int maxQuestions = 2;
+    private int maxQuestions = 4;
     private int currentQuestionNumber = 0;
-    private int goodAnswerCount = 0;
+    private int goodAnswerCount;
     private boolean nextQuestion = false;
 
     private int difficulty = 1;
 
     private ArrayList<Flashcard> flashcards;
+
+    private boolean getResult = false;
 
     List<RadioButton> radios;
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         flashcards = new ArrayList<>();
 
         if (isFirst) {
+            goodAnswerCount = 0;
             isFirst=  false;
             repository = new Repository(this, difficulty);
 
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else {
             Intent srcIntent = getIntent();
             currentQuestionNumber = srcIntent.getIntExtra(EXTRA_CURRENT_QUESTION, 0);
+            goodAnswerCount = srcIntent.getIntExtra(EXTRA_GOOD_QUESTION, 0);
             currentQuestionNumber++;
             isFirst = false;
             flashcards = srcIntent.getParcelableArrayListExtra("aFlashcards");
@@ -152,36 +157,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 responseUser = radios.get(2).getText().toString();
                 break;
             case R.id.validateButton:
-                if(!nextQuestion) {
-                    nextQuestion = true;
-                    if(responseUser != null) {
-                        for(int i = 0; i < radios.size(); i++) {
-                            radios.get(i).setEnabled(false);
-                        }
-                        if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
-                            answerTextView.setText("Bonne réponse");
-                            goodAnswerCount++;
-                        }else {
-                            answerTextView.setText("Mauvaise réponse, la réponse était "+ bird.name);
-                        }
+                if(!getResult) {
+                    if(!nextQuestion) {
+                        nextQuestion = true;
+                        if(responseUser != null) {
+                            for(int i = 0; i < radios.size(); i++) {
+                                radios.get(i).setEnabled(false);
+                            }
+                            if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
+                                answerTextView.setText("Bonne réponse");
+                                goodAnswerCount = goodAnswerCount + 1;
+                            }else {
+                                answerTextView.setText("Mauvaise réponse, la réponse était "+ bird.name);
+                            }
 
-                        Button btn = findViewById(R.id.validateButton);
-                        if(currentQuestionNumber != (maxQuestions -1)) {
-                            btn.setText("Question suivante");
-                        }else {
-                            btn.setText("Voir le résultat");
-                        }
+                            Button btn = findViewById(R.id.validateButton);
+                            if(currentQuestionNumber != (maxQuestions -1)) {
+                                btn.setText("Question suivante");
+                            }else {
+                                btn.setText("Voir le résultat");
+                                getResult = true;
+                            }
 
+                        }
+                    }else {
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putParcelableArrayListExtra("aFlashcards", flashcards);
+                        intent.putExtra("aIsFirst", isFirst);
+                        intent.putExtra(EXTRA_GOOD_QUESTION, goodAnswerCount);
+                        intent.putExtra(EXTRA_CURRENT_QUESTION, currentQuestionNumber);
+                        intent.putExtra("aDifficulty", difficulty);
+                        startActivity(intent);
                     }
                 }else {
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.putParcelableArrayListExtra("aFlashcards", flashcards);
-                    intent.putExtra("aIsFirst", isFirst);
-                    intent.putExtra("aGoodAnswerQuestion", goodAnswerCount);
-                    intent.putExtra(EXTRA_CURRENT_QUESTION, currentQuestionNumber);
+                    Intent intent = new Intent(this, ResultActivity.class);
                     intent.putExtra("aDifficulty", difficulty);
+                    intent.putExtra(EXTRA_GOOD_QUESTION, goodAnswerCount);
+                    intent.putExtra("aMaxQuestions", maxQuestions);
                     startActivity(intent);
                 }
+
 
                 break;
             case R.id.playButton:
