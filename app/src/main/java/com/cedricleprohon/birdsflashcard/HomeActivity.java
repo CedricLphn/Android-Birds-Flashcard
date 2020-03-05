@@ -9,12 +9,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -24,7 +22,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ActionBar actionBar= getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
@@ -42,7 +39,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.playButton:
                 chooseDifficultyDialog();
                 break;
+            case R.id.galleryButton:
+                goToGallery();
+                break;
         }
+    }
+
+    private void goToGallery() {
+        Repository repository = new Repository(this);
+        ArrayList<Flashcard> flashcards = new ArrayList<>();
+        for(int i = 0; i < repository.topics.size(); i++) {
+            flashcards.add(repository.generateFlashcard(repository.topics, repository.get(i), 3));
+        }
+
+        Intent intent = new Intent(this, GalleryActivity.class);
+        intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
+        startActivity(intent);
     }
 
     private void chooseDifficultyDialog() {

@@ -8,7 +8,8 @@ public enum Application {
     MAX_QUESTION("aMaxQuestions"),
     GOOD_QUESTION("aGoodAnswerCount"),
     CURRENT_QUESTION("aCurrentQuestionNumber"),
-    FLASHCARDS_LIST("aFlashcards")
+    FLASHCARDS_LIST("aFlashcards"),
+    TOPICS_LIST("aTopicsList")
 
     ;
 
@@ -22,6 +23,17 @@ public enum Application {
     public static void backToHome(Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
         context.startActivity(intent);
+    }
+
+    public static String getDifficulty(int i) {
+        String[] difficulty = new String[]{
+                "N/A",
+                "Facile",
+                "Moyen",
+                "Difficile"
+        };
+
+        return difficulty[i];
     }
 
     @Override
