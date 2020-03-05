@@ -22,9 +22,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
         setContentView(R.layout.about);
 
-
         findViewById(R.id.backButton).setOnClickListener(this);
-
 
         TextView versionView = findViewById(R.id.appVersion);
         TextView devNames = findViewById(R.id.devNames);

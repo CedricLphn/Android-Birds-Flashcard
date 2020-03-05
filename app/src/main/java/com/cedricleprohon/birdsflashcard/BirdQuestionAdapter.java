@@ -20,8 +20,7 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
     private final List<Flashcard> flashcards;
     List<Topic> topics;
 
-    //classe
-
+    //ViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView themeTV;
@@ -35,18 +34,21 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
         MyViewHolder(View itemView){
             super(itemView);
 
+            // Finding every itemView to fill them with the appropriate data
             birdImageView = itemView.findViewById(R.id.birdImageView);
-
             themeTV = itemView.findViewById(R.id.theme);
             difficultyTV = itemView.findViewById(R.id.difficulty);
             questionItem = itemView.findViewById(R.id.questionItem);
 
-            this.itemView =itemView;
+            this.itemView = itemView;
 
         }
 
+        //Setting the Question Number, the image, the difficulty and the onclickListener for every item
         void display(Topic topic, int id){
+            //this.i will be used for the onClick function
             this.i = id -1;
+
             themeTV.setText("Question " + id);
             birdImageView.setImageResource(itemView.getResources().getIdentifier(topic.image, "drawable", "com.cedricleprohon.birdsflashcard"));
 
@@ -60,13 +62,14 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
         public void onClick(View v) {
             ArrayList<Flashcard> flashcard = new ArrayList<>();
             flashcard.add(flashcards.get(i));
-            Log.i("nik", "onClick: " + flashcards.get(i).topic.name);
-            Log.i("nik", "onClick: " + v.getId());
+
+            //Creating Intent to pass the needed data of the clicked item to MainActivity
             Intent intent = new Intent(this.itemView.getContext(), MainActivity.class);
             intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcard);
             intent.putExtra(Application.DIFFICULTY.toString(), topics.get(i).difficulty);
             intent.putExtra(Application.GOOD_QUESTION.toString(), 0);
             intent.putExtra(Application.MAX_QUESTION.toString(), 1);
+
             itemView.getContext().startActivity(intent);
         }
     }
@@ -87,6 +90,7 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
         return new MyViewHolder(view);
     }
 
+    //For every Item of the Gallery list this function is called
     @Override
     public void onBindViewHolder(BirdQuestionAdapter.MyViewHolder holder, int position) {
         holder.display(topics.get(position), position+1);
