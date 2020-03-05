@@ -1,5 +1,8 @@
 package com.cedricleprohon.birdsflashcard;
 
+import android.content.Context;
+import android.content.Intent;
+
 public enum Application {
     DIFFICULTY("aDifficulty"),
     MAX_QUESTION("aMaxQuestions"),
@@ -14,6 +17,11 @@ public enum Application {
 
     Application(String name) {
         this.name = name;
+    }
+
+    public static void backToHome(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
