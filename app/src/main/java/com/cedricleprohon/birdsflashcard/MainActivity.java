@@ -1,8 +1,12 @@
 package com.cedricleprohon.birdsflashcard;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,12 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Topic bird = null;
     private String responseUser = null;
 
-    private int maxQuestions = 2;
-    private int currentQuestionNumber = 0;
+    private int maxQuestions;
+    private int currentQuestionNumber;
     private int goodAnswerCount;
     private boolean nextQuestion = false;
 
-    private int difficulty = 1;
+    private int difficulty;
 
     private ArrayList<Flashcard> flashcards;
 
@@ -54,6 +58,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActionBar actionBar= getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.i("MainActivity", "handleOnBackPressed: PRESSED");
+                backToHome();
+            }
+        };
+
         flashcards = new ArrayList<>();
         Intent srcIntent = getIntent();
         currentQuestionNumber = srcIntent.getIntExtra(EXTRA_CURRENT_QUESTION, 0);
@@ -63,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         goodAnswerCount = srcIntent.getIntExtra("aGoodAnswerCount", 0);
         bird = flashcards.get(currentQuestionNumber).topic;
 
+        difficulty = srcIntent.getIntExtra(Application.DIFFICULTY.toString(), 1);
+        maxQuestions = srcIntent.getIntExtra(Application.MAX_QUESTION.toString(), 0);
+
 
         initQuestion();
 
@@ -71,10 +89,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.response3RadioButton).setOnClickListener(this);
         findViewById(R.id.validateButton).setOnClickListener(this);
         findViewById(R.id.playButton).setOnClickListener(this);
+        this.getOnBackPressedDispatcher().addCallback(this, callback);
 
         int uiNumber = currentQuestionNumber+1;
-        setTitle("Flashcard " + uiNumber + "/" + maxQuestions);
+        setTitle("Question " + uiNumber + " sur " + maxQuestions);
 
+    }
+
+    private void backToHome() {
+        Application.backToHome(this);
     }
 
     private void initQuestion() {
@@ -100,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else {
             // Is Sound
             findViewById(R.id.playButton).setVisibility(View.VISIBLE);
-
+            TextView question = findViewById(R.id.questionTextView);
+            question.setText("Quel oiseau produit ce cri ?");
         }
 
         ImageView birdImageView = findViewById(R.id.imageView);
@@ -155,11 +179,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }else {
                         Intent intent = new Intent(this, MainActivity.class);
-                        intent.putParcelableArrayListExtra("aFlashcards", flashcards);
-                        intent.putExtra("aIsFirst", isFirst);
-                        intent.putExtra(EXTRA_GOOD_QUESTION, goodAnswerCount);
-                        intent.putExtra(EXTRA_CURRENT_QUESTION, currentQuestionNumber++);
-                        intent.putExtra("aDifficulty", difficulty);
+                        intent.putParcelableArrayListExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
+                        intent.putExtra(Application.GOOD_QUESTION.toString(), goodAnswerCount);
+                        intent.putExtra(Application.CURRENT_QUESTION.toString(), currentQuestionNumber+1);
+                        intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
+                        intent.putExtra(Application.MAX_QUESTION.toString(), maxQuestions);
                         startActivity(intent);
                     }
                 }else {
