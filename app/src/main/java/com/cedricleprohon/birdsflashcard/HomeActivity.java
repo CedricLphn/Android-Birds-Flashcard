@@ -43,7 +43,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 goToGallery();
                 break;
             case R.id.aboutButton:
-                Log.i("about", "clicked");
                 goToAbout();
                 break;
         }
@@ -51,7 +50,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void goToAbout() {
         Intent intent = new Intent(this, AboutActivity.class);
-        //intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
         startActivity(intent);
     }
 
