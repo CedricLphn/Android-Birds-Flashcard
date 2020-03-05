@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/validateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,38 +42,11 @@
         android:id="@+id/answerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/questionTextView"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
         tools:text="Bonne réponse !" />
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="50dp"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/questionTextView">
-
-        <RadioButton
-            android:id="@+id/response1RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ortolan"
-            tools:text="Ortolan" />
-
-        <RadioButton
-            android:id="@+id/response2RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Accenteur Mouchet" />
-
-        <RadioButton
-            android:id="@+id/response3RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Alouette" />
-    </RadioGroup>
 
     <Button
         android:id="@+id/playButton"
@@ -86,5 +59,50 @@
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
         tools:visibility="visible" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/questionTextView">
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:id="@+id/response1RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Ortolan" />
+
+            <RadioButton
+                android:id="@+id/response2RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Accenteur Mouchet" />
+
+            <RadioButton
+                android:id="@+id/response3RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Alouette" />
+        </RadioGroup>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="37dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="23dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.cedricleprohon.birdsflashcard;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,15 +17,13 @@ import java.util.List;
 import java.util.Random;
 
 public class Repository {
-    private ArrayList<Integer> exclude;
-    private JSONArray repo = null;
-    private List<Topic> topics_all;
-    public List<Topic> topics;
+    private JSONArray repo;
+    private ArrayList<Topic> topics_all;
+    public ArrayList<Topic> topics;
 
     private int idTopic;
 
     public Repository(Context context) {
-        exclude = new ArrayList<>();
         topics_all = new ArrayList<>();
         topics = new ArrayList<>();
         String JSONString = null;
@@ -60,6 +60,7 @@ public class Repository {
             JSONObject object = null;
             try {
                 object = repo.getJSONObject(i);
+
                 topics_all.add(new Topic(object.getString("image"), object.getString("name"), object.getString("sound"), object.getInt("difficulty")));
 
             } catch (JSONException e) {
@@ -67,46 +68,47 @@ public class Repository {
             }
         }
 
-      topics.addAll(topics_all);
+
+        topics.addAll(topics_all);
 
     }
 
-    public JSONObject get(int id) throws JSONException {
-        return new JSONObject(repo.get(id).toString());
-    }
+    public Repository(Context context, int difficulty){
+        this(context);
+        topics = new ArrayList<>();
 
-    public String getRandomName() throws JSONException {
-        return get(generateRandom(0, size())).getString("name");
-    }
+        ArrayList<Topic> tmp = new ArrayList<>();
 
-    public int generateRandom(int start, int end) {
-        Random rand = new Random();
-        int range = end - start + 1;
-
-        int random = rand.nextInt(range) + 1;
-        while(exclude.contains(random)) {
-            random = rand.nextInt(range) + 1;
+        for(int i = 0; i < topics_all.size(); i++){
+            if(topics_all.get(i).difficulty != difficulty)
+            {
+                tmp.add(topics_all.get(i));
+            }
         }
 
-        exclude.add(random);
-
-        return random;
+        topics_all.removeAll(tmp);
+        topics.addAll(topics_all);
     }
+
+    public Topic get(int id)  {
+        return topics_all.get(id);
+    }
+
 
     public Flashcard generateFlashcard(List<Topic> topics, Topic topic, int count) {
         Flashcard flashcard = new Flashcard(topic);
 
         Random rand = new Random();
 
-       /* int range = 1 - count + 1;
-        int random = rand.nextInt(count); */
-
         flashcard.answer.add(topic.name);
+
+        int i = 0;
 
         while (flashcard.answer.size() != count) {
             int random = rand.nextInt(topics.size());
 
             Topic t = topics.get(random);
+
             if (!flashcard.answer.contains(t.name)) {
                 flashcard.answer.add(t.name);
             }
@@ -125,4 +127,13 @@ public class Repository {
         return repo.length();
     }
 
+    @Override
+    public String toString() {
+        return "Repository{" +
+                ", repo=" + repo +
+                ", topics_all=" + topics_all +
+                ", topics=" + topics +
+                ", idTopic=" + idTopic +
+                '}';
+    }
 }
