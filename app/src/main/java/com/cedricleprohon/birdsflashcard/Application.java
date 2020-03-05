@@ -3,6 +3,9 @@ package com.cedricleprohon.birdsflashcard;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.ArrayList;
+
+
 public enum Application {
     DIFFICULTY("aDifficulty"),
     MAX_QUESTION("aMaxQuestions"),
@@ -13,27 +16,61 @@ public enum Application {
 
     ;
 
-
     private String name;
 
     Application(String name) {
         this.name = name;
     }
 
+    /**
+     * Go to home if user pressed the back button Android
+     * @param context
+     */
     public static void backToHome(Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
         context.startActivity(intent);
     }
 
-    public static String getDifficulty(int i) {
-        String[] difficulty = new String[]{
-                "N/A",
+    /**
+     * Get all difficulty
+     * @return Table of difficulty
+     */
+    public static String[] getDifficulties() {
+        return new String[]{
                 "Facile",
                 "Moyen",
                 "Difficile"
         };
 
-        return difficulty[i];
+    }
+
+    /**
+     * Parsing difficulty
+     * @param i difficulty
+     * @return difficulty string
+     */
+    public static String getDifficulty(int i) {
+        return getDifficulties()[i];
+    }
+
+    /**
+     * Fast way to go the MainActivity.class
+     * @param context
+     * @param flashcards List of flashcards
+     * @param goodAnswerCount The number of correct answers
+     * @param currentQuestionNumber The current question
+     * @param maxQuestions maxQuestions
+     * @param difficulty Difficulty level
+     */
+
+    public static void startMainActivity(Context context, ArrayList<Flashcard> flashcards, int goodAnswerCount, int currentQuestionNumber, int maxQuestions, int difficulty) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putParcelableArrayListExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
+        intent.putExtra(Application.GOOD_QUESTION.toString(), goodAnswerCount);
+        intent.putExtra(Application.CURRENT_QUESTION.toString(), currentQuestionNumber+1);
+        intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
+        intent.putExtra(Application.MAX_QUESTION.toString(), maxQuestions);
+        context.startActivity(intent);
     }
 
     @Override

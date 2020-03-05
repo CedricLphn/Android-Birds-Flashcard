@@ -50,7 +50,7 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
             themeTV.setText("Question " + id);
             birdImageView.setImageResource(itemView.getResources().getIdentifier(topic.image, "drawable", "com.cedricleprohon.birdsflashcard"));
 
-            difficultyTV.setText(Application.getDifficulty(topic.difficulty));
+            difficultyTV.setText(Application.getDifficulty(topic.difficulty-1));
 
 
             questionItem.setOnClickListener(this);

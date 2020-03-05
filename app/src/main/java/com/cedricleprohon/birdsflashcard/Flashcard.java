@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Flashcard Class
+ */
 public class Flashcard implements Parcelable {
     public final Topic topic;
     public List<String> answer = new ArrayList<>();

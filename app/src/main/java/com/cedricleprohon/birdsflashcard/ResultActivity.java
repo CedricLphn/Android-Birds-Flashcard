@@ -31,24 +31,19 @@ public class ResultActivity extends AppCompatActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
         Intent intent = getIntent();
-        int goodAnswerCount = intent.getIntExtra("aGoodAnswerCount", 0);
-        int maxQuestionsCount = intent.getIntExtra("aMaxQuestions", 0);
-        int difficultyInteger = intent.getIntExtra("aDifficulty", 0);
+        int goodAnswerCount = intent.getIntExtra(Application.GOOD_QUESTION.toString(), 0);
+        int maxQuestionsCount = intent.getIntExtra(Application.MAX_QUESTION.toString(), 0);
+        int difficultyInteger = intent.getIntExtra(Application.DIFFICULTY.toString(), 0);
 
         TextView goodAnswer = findViewById(R.id.goodAnswerTextView);
         TextView percent = findViewById(R.id.resultTextView);
         TextView difficulty = findViewById(R.id.difficultyTextView);
 
-        if(difficultyInteger == 1) {
-            difficulty.setText("Facile");
-        }else if(difficultyInteger == 2) {
-            difficulty.setText("Moyen");
-        }else {
-            difficulty.setText("Difficile");
-        }
+        difficulty.setText(Application.getDifficulty(difficultyInteger));
 
         goodAnswer.setText(goodAnswerCount + "/ "+ maxQuestionsCount);
 
+        // Calcul percent of win
         double winRate = (double)goodAnswerCount / (double)maxQuestionsCount * 100;
 
         percent.setText((int)winRate + "%");
