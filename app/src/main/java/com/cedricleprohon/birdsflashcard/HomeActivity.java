@@ -11,7 +11,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -47,7 +53,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 chooseDifficultyDialog();
                 break;
             case R.id.galleryButton:
-                goToGallery();
+                try {
+                    goToGallery();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.aboutButton:
                 goToAbout();
@@ -69,7 +79,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * Fast way to go Gallery Page
      */
     
-    private void goToGallery() {
+    private void goToGallery() throws IOException {
         Repository repository = new Repository(this);
         ArrayList<Flashcard> flashcards = new ArrayList<>();
         for(int i = 0; i < repository.topics.size(); i++) {
@@ -93,7 +103,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
            @Override
            public void onClick(DialogInterface dialogInterface, int i) {
                dialogInterface.dismiss();
-               LaunchActivity(i+1);
+               try {
+                   LaunchActivity(i+1);
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
            }
        });
 
@@ -106,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * @param difficulty Set the difficulty (1-3)
      * @return
      */
-    private ArrayList<Flashcard> createFlashcardsRepository(int difficulty) {
+    private ArrayList<Flashcard> createFlashcardsRepository(int difficulty) throws IOException {
         Repository repository = new Repository(this, difficulty);
         ArrayList<Flashcard> flashcards = new ArrayList<>();
         boolean generatedFirstCard = false;
@@ -142,7 +156,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      *  - maximum questions for this game
      * @param difficulty
      */
-    private void LaunchActivity(int difficulty) {
+    private void LaunchActivity(int difficulty) throws IOException {
         ArrayList<Flashcard > flashcards = createFlashcardsRepository(difficulty);
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);

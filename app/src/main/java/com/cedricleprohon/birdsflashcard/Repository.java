@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +17,7 @@ public class Repository {
     private ArrayList<Topic> topics_all;
     public ArrayList<Topic> topics;
 
-    public Repository(Context context) {
+    public Repository(Context context) throws IOException {
         topics_all = new ArrayList<>();
         topics = new ArrayList<>();
         loadJson(context);
@@ -26,7 +25,7 @@ public class Repository {
 
 
 
-    public Repository(Context context, int difficulty){
+    public Repository(Context context, int difficulty) throws IOException {
         this(context);
         // Clear all topic
         topics.clear();
@@ -97,50 +96,30 @@ public class Repository {
      * Load JSON
      * @param context
      */
-    private void loadJson(Context context) {
-        String JSONString;
-        JSONArray JSONObject = null;
+    private void loadJson(Context context) throws IOException {
+        BirdsCloud birdsCloud = new BirdsCloud();
+
         try {
+            repo = birdsCloud.toJSON();
+            for(int i = 0; i < repo.length(); i++) {
+                org.json.JSONObject object;
+                try {
+                    object = repo.getJSONObject(i);
+                    topics_all.add(new Topic(object.getString("image"), object.getString("name"), object.getString("sound"), object.getInt("difficulty")));
 
-            //open the inputStream to the file
-            InputStream inputStream = context.getResources().openRawResource(R.raw.data);
-
-            int sizeOfJSONFile = inputStream.available();
-
-            //array that will store all the data
-            byte[] bytes = new byte[sizeOfJSONFile];
-
-            //reading data into the array from the file
-            inputStream.read(bytes);
-
-            //close the input stream
-            inputStream.close();
-
-            JSONString = new String(bytes, "UTF-8");
-            JSONObject = new JSONArray(JSONString);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        catch (JSONException x) {
-            x.printStackTrace();
-        }
-
-        repo = JSONObject;
-
-        for(int i = 0; i < repo.length(); i++) {
-            org.json.JSONObject object;
-            try {
-                object = repo.getJSONObject(i);
-                topics_all.add(new Topic(object.getString("image"), object.getString("name"), object.getString("sound"), object.getInt("difficulty")));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+            topics.addAll(topics_all);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
 
         // Copy all topics in topics
-        topics.addAll(topics_all);
 
     }
 

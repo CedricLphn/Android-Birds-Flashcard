@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +50,7 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
         void display(Topic topic, int id){
             this.i = id -1;
             themeTV.setText("Question " + id);
-            birdImageView.setImageResource(itemView.getResources().getIdentifier(topic.image, "drawable", "com.cedricleprohon.birdsflashcard"));
-
+            Picasso.get().load(Application.URL_FOLDER.toString() + topic.image).into(birdImageView);
             difficultyTV.setText(Application.getDifficulty(topic.difficulty-1));
 
 

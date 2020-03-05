@@ -16,11 +16,14 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-        static boolean isFirst = true;
+    static boolean isFirst = true;
 
     /**
      * Flashcard
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Load Picture
         ImageView birdImageView = findViewById(R.id.imageView);
-        birdImageView.setImageResource(getResources().getIdentifier(bird.image, "drawable", getPackageName()));
+        Picasso.get().load(Application.URL_FOLDER.toString() + bird.image).into(birdImageView);
 
         // Get temporary current flashcard
         Flashcard answer = flashcards.get(currentQuestionNumber);
@@ -232,7 +235,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.playButton:
                 // Play the beautiful song of bird
-                    MediaPlayer.create(this, getResources().getIdentifier(bird.sound, "raw", getPackageName())).start();
+                    MediaPlayer mp = new MediaPlayer();
+
+                try {
+                    mp.setDataSource(Application.URL_FOLDER + bird.sound);
+                    mp.prepareAsync();
+                    mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
         }
     }

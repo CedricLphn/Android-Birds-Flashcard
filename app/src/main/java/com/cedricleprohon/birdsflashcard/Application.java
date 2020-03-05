@@ -12,7 +12,10 @@ public enum Application {
     GOOD_QUESTION("aGoodAnswerCount"),
     CURRENT_QUESTION("aCurrentQuestionNumber"),
     FLASHCARDS_LIST("aFlashcards"),
-    TOPICS_LIST("aTopicsList")
+    TOPICS_LIST("aTopicsList"),
+    URL("http://10.0.2.2"),
+    DATABASE(Application.URL.toString() + "/data"),
+    URL_FOLDER(Application.URL.toString() + "/db/")
 
     ;
 
