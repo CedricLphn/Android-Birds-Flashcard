@@ -1,5 +1,6 @@
 package com.cedricleprohon.birdsflashcard;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class ResultActivity extends AppCompatActivity {
@@ -16,6 +18,15 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        // This callback will only be called when MyFragment is at least Started.
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.i("ResultActivity", "handleOnBackPressed: PRESSED");
+                backToHome();
+            }
+        };
+        this.getOnBackPressedDispatcher().addCallback(this, callback);
         ActionBar actionBar= getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
@@ -42,5 +53,9 @@ public class ResultActivity extends AppCompatActivity {
 
         percent.setText((int)winRate + "%");
         setTitle("Résultat");
+    }
+
+    private void backToHome() {
+        Application.backToHome(this);
     }
 }
