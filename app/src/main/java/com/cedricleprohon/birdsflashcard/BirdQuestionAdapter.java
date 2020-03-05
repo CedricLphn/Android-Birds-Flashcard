@@ -1,12 +1,15 @@
 package com.cedricleprohon.birdsflashcard;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -15,13 +18,13 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
 
     List<BirdQuestion> birdQuestionList;
 
-
     //classe
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView themeTV;
         private TextView difficultyTV;
+        private TextView buttonTV;
 
         MyViewHolder(View itemView){
             super(itemView);
@@ -30,9 +33,21 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
             difficultyTV = itemView.findViewById(R.id.difficulty);
         }
 
-        void display(BirdQuestion birdQuestion){
+
+        void superFonction(){
+            Log.i("toto", "coucou");
+        }
+
+        void display(BirdQuestion birdQuestion, int id){
             themeTV.setText(birdQuestion.getTheme());
             difficultyTV.setText(String.valueOf(birdQuestion.getDifficulty()));
+            themeTV.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Log.i("toto", "tata");
         }
     }
 
@@ -50,12 +65,7 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
 
     @Override
     public void onBindViewHolder(BirdQuestionAdapter.MyViewHolder holder, int position) {
-        holder.display(birdQuestionList.get(position));
-        Log.i("toto", "coucou");
-        //BirdQuestion question = birdQuestionList.get(position);
-
-        //holder.themeTV.setText(question.getTheme());
-        //holder.difficultyTV.setText(String.valueOf(question.getDifficulty()));
+        holder.display(birdQuestionList.get(position), birdQuestionList.get(position).getId());
     }
 
     @Override
