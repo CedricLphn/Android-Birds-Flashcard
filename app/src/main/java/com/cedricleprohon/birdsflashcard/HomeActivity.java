@@ -43,7 +43,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.galleryButton:
                 goToGallery();
                 break;
+            case R.id.aboutButton:
+                goToAbout();
+                break;
         }
+    }
+
+    private void goToAbout() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
     }
 
     private void goToGallery() {
