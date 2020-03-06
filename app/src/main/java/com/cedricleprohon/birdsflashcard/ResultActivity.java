@@ -31,15 +31,15 @@ public class ResultActivity extends AppCompatActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFE49C")));
 
         Intent intent = getIntent();
-        int goodAnswerCount = intent.getIntExtra(Application.GOOD_QUESTION.toString(), 0);
-        int maxQuestionsCount = intent.getIntExtra(Application.MAX_QUESTION.toString(), 0);
-        int difficultyInteger = intent.getIntExtra(Application.DIFFICULTY.toString(), 0);
+        int goodAnswerCount = intent.getIntExtra(BirdUtils.GOOD_QUESTION.toString(), 0);
+        int maxQuestionsCount = intent.getIntExtra(BirdUtils.MAX_QUESTION.toString(), 0);
+        int difficultyInteger = intent.getIntExtra(BirdUtils.DIFFICULTY.toString(), 0);
 
         TextView goodAnswer = findViewById(R.id.goodAnswerTextView);
         TextView percent = findViewById(R.id.resultTextView);
         TextView difficulty = findViewById(R.id.difficultyTextView);
 
-        difficulty.setText(Application.getDifficulty(difficultyInteger-1));
+        difficulty.setText(BirdUtils.getDifficulty(difficultyInteger-1));
 
         goodAnswer.setText(goodAnswerCount + "/ "+ maxQuestionsCount);
 
@@ -51,6 +51,6 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void backToHome() {
-        Application.backToHome(this);
+        BirdUtils.backToHome(this);
     }
 }

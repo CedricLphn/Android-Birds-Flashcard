@@ -1,8 +1,6 @@
 package com.cedricleprohon.birdsflashcard;
 
-import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +50,8 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
             this.i = id -1;
 
             themeTV.setText("Question " + id);
-            Picasso.get().load(Application.URL_FOLDER.toString() + topic.image).into(birdImageView);
-            difficultyTV.setText(Application.getDifficulty(topic.difficulty-1));
+            Picasso.get().load(BirdUtils.URL_FOLDER.toString() + topic.image).into(birdImageView);
+            difficultyTV.setText(BirdUtils.getDifficulty(topic.difficulty-1));
 
 
             questionItem.setOnClickListener(this);
@@ -66,10 +64,10 @@ public class BirdQuestionAdapter extends RecyclerView.Adapter<BirdQuestionAdapte
 
             //Creating Intent to pass the needed data of the clicked item to MainActivity
             Intent intent = new Intent(this.itemView.getContext(), MainActivity.class);
-            intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcard);
-            intent.putExtra(Application.DIFFICULTY.toString(), topics.get(i).difficulty);
-            intent.putExtra(Application.GOOD_QUESTION.toString(), 0);
-            intent.putExtra(Application.MAX_QUESTION.toString(), 1);
+            intent.putExtra(BirdUtils.FLASHCARDS_LIST.toString(), flashcard);
+            intent.putExtra(BirdUtils.DIFFICULTY.toString(), topics.get(i).difficulty);
+            intent.putExtra(BirdUtils.GOOD_QUESTION.toString(), 0);
+            intent.putExtra(BirdUtils.MAX_QUESTION.toString(), 1);
 
             itemView.getContext().startActivity(intent);
         }

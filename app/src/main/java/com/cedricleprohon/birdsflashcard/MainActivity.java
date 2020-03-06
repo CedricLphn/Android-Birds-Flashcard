@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isFirst = false;
         flashcards = new ArrayList<>();
         Intent srcIntent = getIntent();
-        currentQuestionNumber = srcIntent.getIntExtra(Application.CURRENT_QUESTION.toString(), 0);
-        goodAnswerCount = srcIntent.getIntExtra(Application.GOOD_QUESTION.toString(), 0);
-        flashcards = srcIntent.getParcelableArrayListExtra(Application.FLASHCARDS_LIST.toString());
-        difficulty = srcIntent.getIntExtra(Application.DIFFICULTY.toString(), 1);
-        maxQuestions = srcIntent.getIntExtra(Application.MAX_QUESTION.toString(), 0);
+        currentQuestionNumber = srcIntent.getIntExtra(BirdUtils.CURRENT_QUESTION.toString(), 0);
+        goodAnswerCount = srcIntent.getIntExtra(BirdUtils.GOOD_QUESTION.toString(), 0);
+        flashcards = srcIntent.getParcelableArrayListExtra(BirdUtils.FLASHCARDS_LIST.toString());
+        difficulty = srcIntent.getIntExtra(BirdUtils.DIFFICULTY.toString(), 1);
+        maxQuestions = srcIntent.getIntExtra(BirdUtils.MAX_QUESTION.toString(), 0);
 
         // Get the current topic of flashcard
         bird = flashcards.get(currentQuestionNumber).topic;
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Fast way to go home
      */
     private void backToHome() {
-        Application.backToHome(this);
+        BirdUtils.backToHome(this);
     }
 
     /**
@@ -141,7 +141,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Load Picture
         ImageView birdImageView = findViewById(R.id.imageView);
-        Picasso.get().load(Application.URL_FOLDER.toString() + bird.image).into(birdImageView);
+        Picasso.get().load(BirdUtils.URL_FOLDER.toString() + bird.image)
+                .resize(400,400)
+                .into(birdImageView);
 
         // Get temporary current flashcard
         Flashcard answer = flashcards.get(currentQuestionNumber);
@@ -188,46 +190,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  * - responseUser is null --> the user did not answer
                  */
                 if(!getResult) {
-                    if(!nextQuestion) {
+                    if(!nextQuestion && responseUser != null) {
                         nextQuestion = true;
-                        if(responseUser != null) {
-                            // Disable all radio button
-                            for(int i = 0; i < radios.size(); i++) {
-                                radios.get(i).setEnabled(false);
-                            }
-                            // If the user has the right answer
-                            if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
-                                answerTextView.setText("Bonne réponse");
-                                goodAnswerCount = goodAnswerCount + 1;
-                            }else {
-                                answerTextView.setText("Mauvaise réponse, la réponse était "+ bird.name);
-                            }
-
-                            Button btn = findViewById(R.id.validateButton);
-                            if(currentQuestionNumber != (maxQuestions -1)) {
-                                btn.setText("Question suivante");
-                            }else {
-                                btn.setText("Voir le résultat");
-                                getResult = true;
-                            }
-
+                        // Disable all radio button
+                        for(int i = 0; i < radios.size(); i++) {
+                            radios.get(i).setEnabled(false);
                         }
+                        // If the user has the right answer
+                        if(responseUser.equals(flashcards.get(currentQuestionNumber).topic.name)) {
+                            answerTextView.setText("Bonne réponse");
+                            goodAnswerCount = goodAnswerCount + 1;
+                        }else {
+                            answerTextView.setText("Mauvaise réponse, la réponse était "+ bird.name);
+                        }
+
+                        Button btn = findViewById(R.id.validateButton);
+                        if(currentQuestionNumber != (maxQuestions -1)) {
+                            btn.setText("Question suivante");
+                        }else {
+                            btn.setText("Voir le résultat");
+                            getResult = true;
+                        }
+
                     }else {
-                        Application.startMainActivity(
-                                this,
-                                flashcards,
-                                goodAnswerCount,
-                                currentQuestionNumber,
-                                maxQuestions,
-                                difficulty
-                        );
+                        if(responseUser != null) {
+                            BirdUtils.startMainActivity(
+                                    this,
+                                    flashcards,
+                                    goodAnswerCount,
+                                    currentQuestionNumber,
+                                    maxQuestions,
+                                    difficulty
+                            );
+                        }
+
                     }
                 }else {
                     // If the number of questions is reached, the user is redirected to the result page.
                     Intent intent = new Intent(this, ResultActivity.class);
-                    intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
-                    intent.putExtra(Application.GOOD_QUESTION.toString(), goodAnswerCount);
-                    intent.putExtra(Application.MAX_QUESTION.toString(), maxQuestions);
+                    intent.putExtra(BirdUtils.DIFFICULTY.toString(), difficulty);
+                    intent.putExtra(BirdUtils.GOOD_QUESTION.toString(), goodAnswerCount);
+                    intent.putExtra(BirdUtils.MAX_QUESTION.toString(), maxQuestions);
                     startActivity(intent);
                 }
 
@@ -238,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MediaPlayer mp = new MediaPlayer();
 
                 try {
-                    mp.setDataSource(Application.URL_FOLDER + bird.sound);
+                    mp.setDataSource(BirdUtils.URL_FOLDER + bird.sound);
                     mp.prepareAsync();
                     mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override

@@ -9,13 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,7 +81,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         Intent intent = new Intent(this, GalleryActivity.class);
-        intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
+        intent.putExtra(BirdUtils.FLASHCARDS_LIST.toString(), flashcards);
         startActivity(intent);
     }
 
@@ -99,7 +93,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
 
        mBuilder.setTitle("Choisir la difficulté");
-       mBuilder.setSingleChoiceItems(Application.getDifficulties(), -1, new DialogInterface.OnClickListener() {
+       mBuilder.setSingleChoiceItems(BirdUtils.getDifficulties(), -1, new DialogInterface.OnClickListener() {
            @Override
            public void onClick(DialogInterface dialogInterface, int i) {
                dialogInterface.dismiss();
@@ -159,10 +153,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void LaunchActivity(int difficulty) throws IOException {
         ArrayList<Flashcard > flashcards = createFlashcardsRepository(difficulty);
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
-        intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
-        intent.putExtra(Application.GOOD_QUESTION.toString(), 0);
-        intent.putExtra(Application.MAX_QUESTION.toString(), EXTRA_MAX_QUESTION);
+        intent.putExtra(BirdUtils.FLASHCARDS_LIST.toString(), flashcards);
+        intent.putExtra(BirdUtils.DIFFICULTY.toString(), difficulty);
+        intent.putExtra(BirdUtils.GOOD_QUESTION.toString(), 0);
+        intent.putExtra(BirdUtils.MAX_QUESTION.toString(), EXTRA_MAX_QUESTION);
         startActivity(intent);
     }
 }

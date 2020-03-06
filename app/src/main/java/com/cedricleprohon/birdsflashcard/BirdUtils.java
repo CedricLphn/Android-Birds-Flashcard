@@ -6,7 +6,7 @@ import android.content.Intent;
 import java.util.ArrayList;
 
 
-public enum Application {
+public enum BirdUtils {
     DIFFICULTY("aDifficulty"),
     MAX_QUESTION("aMaxQuestions"),
     GOOD_QUESTION("aGoodAnswerCount"),
@@ -14,14 +14,14 @@ public enum Application {
     FLASHCARDS_LIST("aFlashcards"),
     TOPICS_LIST("aTopicsList"),
     URL("http://13.93.86.145"),
-    DATABASE(Application.URL.toString() + "/data"),
-    URL_FOLDER(Application.URL.toString() + "/db/")
+    DATABASE(BirdUtils.URL.toString() + "/data"),
+    URL_FOLDER(BirdUtils.URL.toString() + "/db/")
 
     ;
 
     private String name;
 
-    Application(String name) {
+    BirdUtils(String name) {
         this.name = name;
     }
 
@@ -68,11 +68,11 @@ public enum Application {
 
     public static void startMainActivity(Context context, ArrayList<Flashcard> flashcards, int goodAnswerCount, int currentQuestionNumber, int maxQuestions, int difficulty) {
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putParcelableArrayListExtra(Application.FLASHCARDS_LIST.toString(), flashcards);
-        intent.putExtra(Application.GOOD_QUESTION.toString(), goodAnswerCount);
-        intent.putExtra(Application.CURRENT_QUESTION.toString(), currentQuestionNumber+1);
-        intent.putExtra(Application.DIFFICULTY.toString(), difficulty);
-        intent.putExtra(Application.MAX_QUESTION.toString(), maxQuestions);
+        intent.putParcelableArrayListExtra(BirdUtils.FLASHCARDS_LIST.toString(), flashcards);
+        intent.putExtra(BirdUtils.GOOD_QUESTION.toString(), goodAnswerCount);
+        intent.putExtra(BirdUtils.CURRENT_QUESTION.toString(), currentQuestionNumber+1);
+        intent.putExtra(BirdUtils.DIFFICULTY.toString(), difficulty);
+        intent.putExtra(BirdUtils.MAX_QUESTION.toString(), maxQuestions);
         context.startActivity(intent);
     }
 

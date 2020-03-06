@@ -33,7 +33,7 @@ public class BirdsCloud {
         StrictMode.setThreadPolicy(policy);
 
         Request request = new Request.Builder()
-                .url(Application.DATABASE.toString())
+                .url(BirdUtils.DATABASE.toString())
                 .build();
 
         try(Response response = client.newCall(request).execute()) {
