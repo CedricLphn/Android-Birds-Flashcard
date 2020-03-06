@@ -13,7 +13,7 @@ public enum Application {
     CURRENT_QUESTION("aCurrentQuestionNumber"),
     FLASHCARDS_LIST("aFlashcards"),
     TOPICS_LIST("aTopicsList"),
-    URL("http://10.0.2.2"),
+    URL("http://13.93.86.145"),
     DATABASE(Application.URL.toString() + "/data"),
     URL_FOLDER(Application.URL.toString() + "/db/")
 

@@ -39,7 +39,7 @@ public class ResultActivity extends AppCompatActivity {
         TextView percent = findViewById(R.id.resultTextView);
         TextView difficulty = findViewById(R.id.difficultyTextView);
 
-        difficulty.setText(Application.getDifficulty(difficultyInteger));
+        difficulty.setText(Application.getDifficulty(difficultyInteger-1));
 
         goodAnswer.setText(goodAnswerCount + "/ "+ maxQuestionsCount);
 
